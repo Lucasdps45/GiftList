@@ -1,23 +1,21 @@
 import os
+from typing import Optional
 
-from fastapi import FastAPI, Response, HTTPException, Depends, Request, Cookie
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
 
+from auth import admin_tokens, gerar_token, verificar_admin
 from database import Base, SessionLocal, engine
 from models import Gift
-from schemas import PresenteResponse, PresenteAdminResponse
-from auth import gerar_token, verificar_admin, admin_tokens
-
+from schemas import PresenteAdminResponse, PresenteResponse
 
 Base.metadata.create_all(engine)
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
 templates = Jinja2Templates(directory='templates')
-
-
 
 @app.get('/')
 def home(request: Request):
@@ -27,13 +25,11 @@ def home(request: Request):
 def pagina_login(request: Request):
     return templates.TemplateResponse(request, 'login.html')
 
-
 @app.get('/admin')
 def pagina_admin(request: Request, session_token: str = Cookie(default=None)):
     if session_token not in admin_tokens:
         return RedirectResponse('/entrar')
     return templates.TemplateResponse(request, 'admin.html')
-
 
 @app.post('/login')
 def login(senha: str, response: Response):
@@ -43,7 +39,6 @@ def login(senha: str, response: Response):
     token = gerar_token()
     response.set_cookie(key='session_token', value=token, httponly=True)
     return {'status': 'logado'}
-
 
 @app.get('/presentes')
 def listar_presentes():
@@ -64,7 +59,6 @@ def listar_presentes():
 
         return resultado
 
-
 @app.post('/presentes/{id}/reservar')
 def reservar_presente(id: int, convidado: str):
     with SessionLocal() as session:
@@ -79,7 +73,6 @@ def reservar_presente(id: int, convidado: str):
         nome_presente = presente.nome
 
     return f'Você escolheu {nome_presente}, obrigado!'
-
 
 @app.get('/admin/presentes')
 def listar_presentes_admin(autorizado: bool = Depends(verificar_admin)):
@@ -97,7 +90,6 @@ def listar_presentes_admin(autorizado: bool = Depends(verificar_admin)):
             ))
         return resultado
 
-
 @app.post('/admin/presentes')
 def criar_presente(nome: str, link: str, autorizado: bool = Depends(verificar_admin)):
     with SessionLocal() as session:
@@ -107,3 +99,34 @@ def criar_presente(nome: str, link: str, autorizado: bool = Depends(verificar_ad
         nome_criado = novo_presente.nome
 
     return f'{nome_criado} adicionado com sucesso'
+
+@app.delete('/admin/presentes/{id}')
+def deletar_presentes(id : int, autorizado: bool = Depends(verificar_admin)):
+    with SessionLocal() as session:
+        presente = session.get(Gift, id)
+        if presente is None:
+            raise HTTPException(status_code=404, detail='Item não encontrado')
+
+        session.delete(presente)
+        session.commit()
+        presente_deletado = presente.nome
+
+    return f'O {presente_deletado} foi deletado da lista.'
+
+@app.patch('/admin/presentes/{id}')
+def editar_presentes(id : int, nome: Optional[str], link: Optional[str], autorizado: bool = Depends(verificar_admin)):
+    with SessionLocal() as session:
+        presente = session.get(Gift, id)
+        if presente is None:
+            raise HTTPException(status_code=404, detail='Item não encontrado')
+
+        if nome is not None:
+            presente.nome = nome
+
+        if link is not None:
+            presente.link = link
+
+        session.commit()
+        presente_atualizado = presente.nome
+
+    return f'O {presente_atualizado} foi atualizado com sucesso.'
