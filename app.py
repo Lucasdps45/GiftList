@@ -1,15 +1,38 @@
 import os
 
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import FastAPI, Response, HTTPException, Depends, Request, Cookie
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
-from auth import gerar_token, verificar_admin
 from database import Base, SessionLocal, engine
 from models import Gift
-from schemas import PresenteAdminResponse, PresenteResponse
+from schemas import PresenteResponse, PresenteAdminResponse
+from auth import gerar_token, verificar_admin, admin_tokens
+
 
 Base.metadata.create_all(engine)
 
 app = FastAPI()
+app.mount('/static', StaticFiles(directory='static'), name='static')
+templates = Jinja2Templates(directory='templates')
+
+
+
+@app.get('/')
+def home(request: Request):
+    return templates.TemplateResponse(request, 'index.html')
+
+@app.get('/entrar')
+def pagina_login(request: Request):
+    return templates.TemplateResponse(request, 'login.html')
+
+
+@app.get('/admin')
+def pagina_admin(request: Request, session_token: str = Cookie(default=None)):
+    if session_token not in admin_tokens:
+        return RedirectResponse('/entrar')
+    return templates.TemplateResponse(request, 'admin.html')
 
 
 @app.post('/login')
@@ -33,6 +56,7 @@ def listar_presentes():
             status = "🎁 Disponível" if presente.reservado_por is None else "✅ Já foi escolhido"
 
             resultado.append(PresenteResponse(
+                id=presente.id,
                 nome=presente.nome,
                 link=presente.link,
                 status=status

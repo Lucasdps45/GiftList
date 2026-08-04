@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Chá de Casa Nova</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="page">
+    <div class="admin-header">
+      <h1>Sua listinha</h1>
+      <a href="/" class="btn--ghost">Ver página pública ↗</a>
+    </div>
+
+    <section class="panel">
+      <h2>Adicionar presente</h2>
+      <form id="form-novo-presente" class="admin-form">
+        <input type="text" id="novo-nome" placeholder="Nome do presente" required maxlength="100" />
+        <input type="url" id="novo-link" placeholder="Link (loja, site...)" required />
+        <button class="btn btn--rose" type="submit">Adicionar</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Presentes cadastrados</h2>
+      <ul class="admin-list" id="lista-admin">
+        <p class="empty">Carregando...</p>
+      </ul>
+    </section>
+  </main>
+
+  <script src="/static/admin.js"></script>
+</body>
+</html>

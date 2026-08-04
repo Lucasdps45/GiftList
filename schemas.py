@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class PresenteResponse(BaseModel):
+    id : int
     nome: str
     link: str
     status: str
