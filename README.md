@@ -1,4 +1,4 @@
-# 🎁 GiftList — Chá de Casa Nova
+# 🎁 GiftList | Chá de Casa Nova
 
 Aplicação web full-stack para gerenciar uma lista de presentes de chá de casa nova. Convidados escolhem presentes de forma anônima entre si, e o organizador tem um painel próprio para cadastrar itens e acompanhar quem reservou o quê.
 
@@ -13,12 +13,12 @@ Aplicação web full-stack para gerenciar uma lista de presentes de chá de casa
 
 ## ✨ Funcionalidades
 
-- **Lista pública de presentes** — qualquer visitante vê os itens disponíveis, sem precisar de login
-- **Reserva anônima entre convidados** — ao escolher um presente, o convidado informa o nome; a partir daí, o item aparece como indisponível para os demais, sem revelar quem reservou
-- **Painel administrativo protegido** — login por senha, com sessão via cookie
-- **CRUD completo de presentes** — criar, editar e excluir itens da lista
-- **Reserva oculta por padrão no admin** — o nome de quem reservou só aparece ao clicar em "ver quem reservou" (pensado para permitir uma dinâmica de adivinhação entre o casal)
-- **Interface própria, responsiva** — layout com identidade visual construída para o tema, sem uso de templates prontos
+- **Lista pública de presentes** : qualquer visitante vê os itens disponíveis, sem precisar de login
+- **Reserva anônima entre convidados** : ao escolher um presente, o convidado informa o nome; a partir daí, o item aparece como indisponível para os demais, sem revelar quem reservou
+- **Painel administrativo protegido** : login por senha, com sessão via cookie
+- **CRUD completo de presentes** : criar, editar e excluir itens da lista
+- **Reserva oculta por padrão no admin** : o nome de quem reservou só aparece ao clicar em "ver quem reservou" 
+- **Interface própria, responsiva** : layout com identidade visual construída para o tema, sem uso de templates prontos
 
 ## 🛠️ Stack
 
