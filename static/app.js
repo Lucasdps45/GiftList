@@ -24,7 +24,7 @@ function criarTag(presente) {
 
   tag.innerHTML = `
     <span class="tag__status ${statusClasse}">${presente.status}</span>
-    <h2 class="tag__nome">${presente.nome}</h2>
+    <h2 class="tag__nome" title="${presente.nome}">${truncar(presente.nome)}</h2>
     <a class="tag__link" href="${presente.link}" target="_blank" rel="noopener">Ver o presente ↗</a>
     <div class="tag__acao"></div>
   `;
@@ -63,6 +63,11 @@ function criarTag(presente) {
   return tag;
 }
 
+function truncar(texto, limite = 45) {
+  if (texto.length <= limite) return texto;
+  return texto.slice(0, limite).trim() + '…';
+}
+
 async function reservarPresente(id, nome, tagElement) {
   if (!nome || nome.trim() === '') return;
 
@@ -71,12 +76,25 @@ async function reservarPresente(id, nome, tagElement) {
   });
 
   if (resposta.ok) {
+    const mensagem = await resposta.text();
+    mostrarToast(mensagem.replace(/"/g, ''));
     await carregarPresentes();
   } else {
     const erro = await resposta.json();
     alert(erro.detail || 'Não foi possível reservar esse presente.');
     await carregarPresentes();
   }
+}
+
+function mostrarToast(mensagem) {
+  const toast = document.getElementById('toast');
+  toast.textContent = `${mensagem} 🎀`;
+  toast.classList.add('is-visible');
+
+  clearTimeout(mostrarToast._timer);
+  mostrarToast._timer = setTimeout(() => {
+    toast.classList.remove('is-visible');
+  }, 3200);
 }
 
 carregarPresentes();

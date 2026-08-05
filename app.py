@@ -114,7 +114,7 @@ def deletar_presentes(id : int, autorizado: bool = Depends(verificar_admin)):
     return f'O {presente_deletado} foi deletado da lista.'
 
 @app.patch('/admin/presentes/{id}')
-def editar_presentes(id : int, nome: Optional[str], link: Optional[str], autorizado: bool = Depends(verificar_admin)):
+def editar_presentes(id : int, nome: Optional[str] = None, link: Optional[str] = None, autorizado: bool = Depends(verificar_admin)):
     with SessionLocal() as session:
         presente = session.get(Gift, id)
         if presente is None:

@@ -1,4 +1,5 @@
 import secrets
+
 from fastapi import Cookie, HTTPException, status
 
 admin_tokens = set()
